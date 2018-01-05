@@ -1,0 +1,101 @@
+{
+  "about": {
+    "author": "Artyom Leibwitz",
+    "description": [
+      "This file contains game skills: descriptions with formulas.",
+      "Do not touch this if you don't know what you do."
+    ]
+  },
+  "skills": {
+    "small_guns": {
+      "name": "Small Guns",
+      "init": "5 + (4 * A)",
+      "desc": ["SMALL_GUNS_DESC"]
+    },
+    "big_guns": {
+      "name": "Big Guns",
+      "init": "2 * A",
+      "desc": ["BIG_GUNS_DESC"]
+    },
+    "energy_weapons": {
+      "name": "Energy Weapons",
+      "init": "2 * A",
+      "desc": ["ENERGY_WEAPONS_DESC"]
+    },
+    "unarmed": {
+      "name": "Unarmed",
+      "init": "40 + (0.5 * S) + (0.5 * A)",
+      "desc": ["UNARMED_DESC"]
+    },
+    "melee_weapons": {
+      "name": "Melee Weapons",
+      "init": "55 + (0.5 * S) + (0.5 * A)",
+      "desc": ["MELEE_WEAPONS_DESC"]
+    },
+    "throwing": {
+      "name": "Throwing",
+      "init": "4 * A",
+      "desc": ["THROWING_DESC"]
+    },
+    "first_aid": {
+      "name": "First Aid",
+      "init": "30 + (0.5 * P) + (0.5 * I)",
+      "desc": ["FIRST_AID_DESC"]
+    },
+    "doctor": {
+      "name": "Doctor",
+      "init": "15 + (0.5 * P) + (0.5 * I)",
+      "desc": ["DOCTOR_DESC"]
+    },
+    "sneak": {
+      "name": "Sneak",
+      "init": "25 + A",
+      "desc": ["SNEAK_DESC"]
+    },
+    "lockpick": {
+      "name": "Lockpick",
+      "init": "20 + (0.5 * P) + (0.5 * A)",
+      "desc": ["LOCKPICKING_DESC"]
+    },
+    "steal": {
+      "name": "Steal",
+      "init": "20 + A",
+      "desc": ["STEAL_DESC"]
+    },
+    "traps": {
+      "name": "Traps",
+      "init": "20 + (0.5 * P) + (0.5 * A)",
+      "desc": ["TRAPS_DESC"]
+    },
+    "science": {
+      "name": "Science",
+      "init": "25 + (2 * I)",
+      "desc": ["SCIENCE_DESC"]
+    },
+    "repair": {
+      "name": "Repair",
+      "init": "20 + I",
+      "desc": ["REPAIR_DESC"]
+    },
+    "speech": {
+      "name": "Speech",
+      "init": "25 + (2 * C)",
+      "desc": ["SPEECH_DESC"]
+    },
+    "barter": {
+      "name": "Barter",
+      "init": "20 + (2 * C)",
+      "desc": ["BARTER_DESC"]
+    },
+    "gambling": {
+      "name": "Gambling",
+      "init": "5 * L",
+      "desc": ["GAMBLING_DESC"]
+    },
+    "outdoorsman": {
+      "name": "Outdoorsman",
+      "init": "(2 * E) + (2 * I)",
+      "desc": ["OUTDOORSMAN_DESC"]
+    }
+  }
+}

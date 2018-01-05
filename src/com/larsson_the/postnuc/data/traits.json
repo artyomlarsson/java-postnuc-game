@@ -1,0 +1,101 @@
+{
+  "about": {
+    "author": "Artyom Leibwitz",
+    "description": [
+      "This file contains game traits with benefits, penalties, description",
+      "Do not touch this if you don't know what you do."
+    ]
+  },
+  "traits": [
+    {
+      "name": "Bruiser",
+      "benefit": "S += 2",
+      "penalty": "ap -= 2",
+      "desc": "BRUISER_DESC"
+    },
+    {
+      "name": "Chem Reliant",
+      "benefit": "total_chem_recovery_duration /= 2",
+      "penalty": "chem_addicting_chance *= 2",
+      "desc": "CHEM_REL_DESC"
+    },
+    {
+      "name": "Chem Resistant",
+      "benefit": "total_chem_duration /= 2",
+      "penalty": "chem_addicting_chance /= 2",
+      "desc": "CHEM_RES_DESC"
+    },
+    {
+      "name": "Fast Metabolism",
+      "benefit": "healing += 2",
+      "penalty": "poison_resist = 0; rad_resist = 0",
+      "desc": "FAST_MET_DESC"
+    },
+    {
+      "name": "Fast Shot",
+      "benefit": "ranged_attack_ap -= 1",
+      "penalty": "aim_attack = false",
+      "desc": "FAST_SHOT_DESC"
+    },
+    {
+      "name": "Finesse",
+      "benefit": "crit_chance += 10",
+      "penalty": "total_damage *= 0.7",
+      "desc": "FINESSE_DESC"
+    },
+    {
+      "name": "Gifted",
+      "benefit": "special += 1",
+      "penalty": "skills -= 1; level_skill_points -= 5",
+      "desc": "GIFTED_DESC"
+    },
+    {
+      "name": "Good Natured",
+      "benefit": "first_aid += 15; doctor += 15; speech += 15; barter += 15",
+      "penalty": "big_guns -= 10; small_guns -= 10; energy_weapons -= 10; throwing -= 10; melee_weapons -= 10; unarmed -= 10",
+      "desc": "GOOD_NAT_DESC"
+    },
+    {
+      "name": "Heavy Handed",
+      "benefit": "melee_damage += 4",
+      "penalty": "crit_damage *= 0.7",
+      "desc": "HEAVY_HANDED_DESC"
+    },
+    {
+      "name": "Jinxed",
+      "benefit": "crit_fail *= 3",
+      "penalty": "crit_fail_yourself *= 3",
+      "desc": "JINXED_DESC"
+    },
+    {
+      "name": "Kamikaze",
+      "benefit": "combat_sequence += 5",
+      "penalty": "natural_ap = 0",
+      "desc": "KAMIKAZE_DESC"
+    },
+    {
+      "name": "One Hander",
+      "benefit": "if weapon.one_handed == true: hit_chance += 20",
+      "penalty": "if weapon.two_handed == true: hit_chance -= 40",
+      "desc": "ONE_HANDER_DESC"
+    },
+    {
+      "name": "Sex Appeal",
+      "benefit": "if target.sex != sex: target.reaction += 20",
+      "penalty": "if target.sex == sex: target.reaction -= 20",
+      "desc": "SEX_APPEAL_DESC"
+    },
+    {
+      "name": "Skilled",
+      "benefit": "level_skill_points += 5",
+      "penalty": "perk_rate += 1",
+      "desc": "SKILLED_DESC"
+    },
+    {
+      "name": "Small Frame",
+      "benefit": "a += 1",
+      "penalty": "carry_weight = 25 + (15 * S)",
+      "desc": "SMALL_FRAME_DESC"
+    }
+  ]
+}
