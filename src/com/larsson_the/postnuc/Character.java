@@ -4,9 +4,12 @@ public class Character {
 
     class Skill {
     }
-    class InventoryItem {
-    }
     class Trait {
+    }
+    class Perk {
+
+    }
+    class InventoryItem {
     }
 }
 
