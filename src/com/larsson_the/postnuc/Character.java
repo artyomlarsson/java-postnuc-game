@@ -11,7 +11,8 @@ public class Character {
     private Character.Perks perks;
     private Character.Inventory inventory;
 
-    Character(Map<String, String> basics, Map<String, Integer> special) throws SPECIAL.IllegalSpecialStatException {
+    Character(Map<String, String> basics, Map<String, Integer> special)
+            throws SPECIAL.IllegalSpecialStatException {
         this.basics = new Character.Basics(basics);
         this.special = new Character.SPECIAL(special);
 
