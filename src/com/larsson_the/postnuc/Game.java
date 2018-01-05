@@ -86,7 +86,7 @@ public class Game {
      * @throws MissingArgumentException Throws when some required data to save is missing
      */
     private void save() throws MissingArgumentException {
-        saveInfo = saveInfo == null ? new HashMap<>() : saveInfo;
+        saveInfo = (saveInfo == null) ? new HashMap<>() : saveInfo;
 
         if (characterBasic.get("name") == null) {
             throw new MissingArgumentException("Невозможно сохранить игру без имени!");
