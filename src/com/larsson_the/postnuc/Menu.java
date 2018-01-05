@@ -14,7 +14,7 @@ class Menu {
     private Map<String, String> choices;
     private Map<String, MenuChoiceTask> tasks;
     private boolean backChoice;
-    private LastChoice lastChoice;
+    private String lastChoice;
 
     /**
      * @param message Message to show in menu (for ex. 'Choose your hero'). ':' sign will be added automaticly
@@ -29,7 +29,7 @@ class Menu {
         this.choices = choices;
         this.tasks = tasks;
         this.backChoice = backChoice;
-        this.lastChoice = LastChoice.NONE;
+        this.lastChoice = null;
 
         prepare();
     }
@@ -61,7 +61,7 @@ class Menu {
 
             choice = Game.sc.nextLine().toLowerCase();
             if (choices.get(choice) != null) {
-                lastChoice = choice.equals("b") ? LastChoice.BACK : LastChoice.MENU_BUTTON;
+                lastChoice = choice;
                 break;
             }
 
@@ -76,10 +76,15 @@ class Menu {
      * @return true if back has been pressed
      */
     public boolean isBackPressed() {
-        return lastChoice == LastChoice.BACK;
+        return lastChoice.equals("b");
     }
 
-    public enum LastChoice { NONE, MENU_BUTTON, BACK }
+    /**
+     * @return null if no choice or command accepted in menu
+     */
+    public String getLastChoice() {
+        return lastChoice;
+    }
 
     /**
      * This class provides easy 'on the fly' creating menus
