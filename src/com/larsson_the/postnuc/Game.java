@@ -16,11 +16,7 @@ public class Game {
     private final static int SAME_SAVES_LIMIT = 256;
 
     private Map<String, String> saveInfo;
-    private Map<String, String> characterBasic;
-    private Map<String, Integer> characterSpecial;
-    private List<Character.Skill> characterSkills;
-    private List<Character.Trait> characterTraits;
-    private List<Character.InventoryItem> characterInventory;
+    private Character player;
 
     private static Logger log = Logger.getLogger(Game.class.getName());
     private boolean debug = true;
@@ -88,7 +84,7 @@ public class Game {
     private void save() throws MissingArgumentException {
         saveInfo = (saveInfo == null) ? new HashMap<>() : saveInfo;
 
-        if (characterBasic.get("name") == null) {
+        if (player.getBasic("name") == null) {
             throw new MissingArgumentException("Невозможно сохранить игру без имени!");
         }
 
@@ -99,10 +95,10 @@ public class Game {
 
             int i = 0;
             while ((new File(Utils.getSavesDir() + '/'
-                    + characterBasic.get("name") + "_" + (++i) + ".json").exists())) {
+                    + player.getBasic("name") + "_" + (++i) + ".json").exists())) {
                 if (i == SAME_SAVES_LIMIT) {
                     String tmp;
-                    System.out.println("Достигнут лимит сохранений с вашим именем(" + characterBasic.get("name") + ")!");
+                    System.out.println("Достигнут лимит сохранений с вашим именем(" + player.getBasic("name") + ")!");
                     do {
                         System.out.print("Перезаписать последнее сохранение(Y/n)?: ");
                     } while (!(tmp = sc.nextLine().toLowerCase()).equals("y") && !tmp.equals("n"));
@@ -117,7 +113,7 @@ public class Game {
                 }
             }
 
-            saveInfo.put("savename", characterBasic.get("name") + "_" + i);
+            saveInfo.put("savename", player.getBasic("name") + "_" + i);
             log.info("Created savename " + saveInfo.get("savename"));
         }
 
@@ -140,15 +136,15 @@ public class Game {
             }
             save.put("character", charData);
             charData.put("basic", charDataBasic);
-            for (Map.Entry<String, String> entry : characterBasic.entrySet()) {
-                charDataBasic.put(entry.getKey(), characterBasic.get(entry.getKey()));
+            for (Map.Entry<String, String> entry : player.getBasics().entrySet()) {
+                charDataBasic.put(entry.getKey(), entry.getValue());
             }
             charData.put("special", charDataSpecial);
-            for (Map.Entry<String, Integer> entry : characterSpecial.entrySet()) {
-                charDataSpecial.put(entry.getKey(), characterSpecial.get(entry.getKey()));
+            for (Map.Entry<String, Integer> entry : player.getSpecial().entrySet()) {
+                charDataSpecial.put(entry.getKey(), entry.getValue());
             }
 
-            writer.write(save.toString(2));
+            writer.write(save.toString(4));
         } catch (IOException e) {
             if (debug) e.printStackTrace();
             System.out.println("Ошибка: " + e.getMessage());
@@ -169,14 +165,21 @@ public class Game {
         System.out.println("воздух взмыли ядерные боеголовки большинства государств мира. Вам повезло:");
         System.out.println("ваши родители оказались участниками эксперимента \"Убежище\".");
 
-        setupBasic();
-        setupSpecial();
-        setupSkills();
+        try {
+            player = new Character(setupBasic(), setupSpecial()); //setupSkills();
+        } catch (Character.SPECIAL.IllegalSpecialStatException e) {
+            if (debug) e.printStackTrace();
+
+            System.out.println("Ошибка: " + e.getMessage());
+            System.out.println("Возвращение в главное меню...");
+            return 0;
+        }
 
         try {
             save();
         } catch (MissingArgumentException e) {
             if (debug) e.printStackTrace();
+
             System.out.println("Ошибка: " + e.getMessage());
             System.out.println("Возвращение в главное меню...");
             return 0;
@@ -199,6 +202,7 @@ public class Game {
             saves = Utils.getSaves();
         } catch (DirectoryCreatingException | InvalidPathException e) {
             if (debug) e.printStackTrace();
+
             System.out.println("Ошибка: " + e.getMessage());
             return 0;
         }
@@ -215,13 +219,22 @@ public class Game {
                     JSONObject jCharacterBasic = jCharacter.getJSONObject("basic");
                     JSONObject jSave = json.getJSONObject("save");
 
-                    characterSpecial = new LinkedHashMap<>();
-                    for (String key : jCharacterSpecial.keySet())
-                        characterSpecial.put(key, jCharacterSpecial.getInt(key));
-
-                    characterBasic = new LinkedHashMap<>();
+                    Map<String, String> playerBasic = new LinkedHashMap<>();
                     for (String key : jCharacterBasic.keySet())
-                        characterBasic.put(key, jCharacterBasic.getString(key));
+                        playerBasic.put(key, jCharacterBasic.getString(key));
+
+                    Map<String, Integer> playerSpecial = new LinkedHashMap<>();
+                    for (String key : jCharacterSpecial.keySet())
+                        playerSpecial.put(key, jCharacterSpecial.getInt(key));
+
+                    try {
+                        player = new Character(playerBasic, playerSpecial);
+                    } catch (Character.SPECIAL.IllegalSpecialStatException e) {
+                        if (debug) e.printStackTrace();
+
+                        System.out.println("Ошибка: " + e.getMessage());
+                        player = null;
+                    }
 
                     saveInfo = new LinkedHashMap<>();
                     for (String key : jSave.keySet())
@@ -231,19 +244,19 @@ public class Game {
                 .build();
         menu.show();
 
-        if (menu.isBackPressed()) {
+        if (menu.isBackPressed() || player == null) {
             return 0;
         }
 
         log.info("SUCCESSFULLY GATHERED SAVE INFO:");
 
         log.info("\tcharacterSpecial:");
-        for (String key : characterSpecial.keySet())
-            log.info("\t\t" + characterSpecial.get(key));
+        for (String key : player.getSpecial().keySet())
+            log.info("\t\t" + player.getSpecial().get(key));
 
         log.info("\tcharacterBasic:");
-        for (String key : characterBasic.keySet())
-            log.info("\t\t" + characterBasic.get(key));
+        for (String key : player.getBasics().keySet())
+            log.info("\t\t" + player.getBasic(key));
 
         log.info("save:");
         for (String key : saveInfo.keySet())
@@ -259,9 +272,9 @@ public class Game {
      * Setup of basic character stats: gender, name, race<br>
      * All basic stats are stored in <u>characterBasic</u>
      */
-    private void setupBasic() {
+    private Map<String, String>  setupBasic() {
         String tmp;
-        characterBasic = new LinkedHashMap<>();
+        Map<String, String> characterBasic = new LinkedHashMap<>();
 
         new Menu.Builder("Укажите ваш пол")
                 .choice("Мужской", (c) -> characterBasic.put("gender", "male"))
@@ -285,26 +298,26 @@ public class Game {
                 .choice("Казах", (c) -> characterBasic.put("race", "kazakh"))
                 .choice("Славянин", (c) -> characterBasic.put("race", "slav"))
                 .show();
+
+        return characterBasic;
     }
 
     /**
      * Setup of SPECIAL character stats: S,P,E,C,I,A,L<br>
      * All basic stats are stored in <u>characterSpecial</u>
      */
-    private void setupSpecial() {
-        characterSpecial = new LinkedHashMap<>();
-
-        Map<String, Integer> tmpSpecial = new LinkedHashMap<>();
+    private Map<String, Integer> setupSpecial() {
+        Map<String, Integer> characterSpecial = new LinkedHashMap<>();
         String line = null;
         int pointsLeft = 5;
 
-        tmpSpecial.put("s", 5);
-        tmpSpecial.put("p", 5);
-        tmpSpecial.put("e", 5);
-        tmpSpecial.put("c", 5);
-        tmpSpecial.put("i", 5);
-        tmpSpecial.put("a", 5);
-        tmpSpecial.put("l", 5);
+        characterSpecial.put("s", 5);
+        characterSpecial.put("p", 5);
+        characterSpecial.put("e", 5);
+        characterSpecial.put("c", 5);
+        characterSpecial.put("i", 5);
+        characterSpecial.put("a", 5);
+        characterSpecial.put("l", 5);
 
         System.out.println("Настало время распределить очки SPECIAL.");
         System.out.println("SPECIAL - это система, состоящая из 7 характеристик:");
@@ -318,7 +331,7 @@ public class Game {
         System.out.println("Каждая хар-ка может иметь значение от 1 до 10.");
         System.out.println("Примеры указания хар-ки: 's=2'(без кавычек), 'P = 3'");
         System.out.println("Когда очков останется 0 и вы уверены в выборе - напишите 'ok'(без кавычек)");
-        for (Map.Entry<String, Integer> entry : tmpSpecial.entrySet())
+        for (Map.Entry<String, Integer> entry : characterSpecial.entrySet())
             System.out.println("  " + entry.getKey() + " = " + entry.getValue() + " ");
         System.out.print("Введите команду(или 'help'): ");
 
@@ -415,12 +428,12 @@ public class Game {
                 System.out.println("Неверный формат ввода!");
             } else {
                 String k = kv[0], v = kv[1];
-                if (tmpSpecial.get(k) == null) {
+                if (characterSpecial.get(k) == null) {
                     System.out.println("Неизвестная характеристика - " + k);
                     continue;
                 }
 
-                int oldKey = tmpSpecial.get(k), newKey;
+                int oldKey = characterSpecial.get(k), newKey;
                 try {
                     newKey = Integer.parseInt(v);
                 } catch (NumberFormatException e) {
@@ -439,11 +452,11 @@ public class Game {
                 }
 
                 pointsLeft += oldKey - newKey;
-                tmpSpecial.put(k, newKey);
+                characterSpecial.put(k, newKey);
             }
 
             System.out.println("Осталось очков SPECIAL для распределения - " + pointsLeft);
-            for (Map.Entry<String, Integer> entry : tmpSpecial.entrySet())
+            for (Map.Entry<String, Integer> entry : characterSpecial.entrySet())
                 System.out.println("  " + entry.getKey().toUpperCase() + " = " + entry.getValue() + " ");
             if (pointsLeft == 0) {
                 System.out.println("Введите 'ok' для подтверждения очков если вы уверены.");
@@ -452,11 +465,11 @@ public class Game {
         } while (!(line = sc.nextLine()).equals("ok") || pointsLeft > 0);
 
         System.out.println("SPECIAL установлены:");
-        for (Map.Entry<String, Integer> entry : tmpSpecial.entrySet()) {
+        for (Map.Entry<String, Integer> entry : characterSpecial.entrySet()) {
             System.out.println("\t" + entry.getKey() + " = " + entry.getValue());
         }
 
-        characterSpecial = tmpSpecial;
+        return characterSpecial;
     }
 
     /**
@@ -464,7 +477,7 @@ public class Game {
      * All basic stats are stored in <u>characterSkills</u>
      */
     private void setupSkills() {
-        characterSkills = new ArrayList<>();
+        //characterSkills = new ArrayList<>();
         // TODO: do this
     }
 
